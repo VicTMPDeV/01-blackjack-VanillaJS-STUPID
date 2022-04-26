@@ -51,3 +51,23 @@ const hitCard = () => {
 // for (let i = 0; i <= deckSize; i++) {
 //     hitCard();
 // }
+
+const cardValue = (card) => {
+
+    const value = card.substring(0, card.length - 1);
+    return (isNaN(value)) ? ( (value === 'A') ? 11 : 10 ) : parseInt(value);
+
+    /* 
+    if( isNaN(value) ){ 
+        //Los únicos valores posibles son 'A','J','Q' y 'K'
+        //En Blackjack 'A' es la única que vale 11 puntos
+        points = (value === 'A') ? 11 : 10; 
+    }else{
+        //El valor numérico es un string, lo convierto a number
+        points = parseInt(value);
+    }
+    */
+
+}
+
+console.log(cardValue('5D'));
