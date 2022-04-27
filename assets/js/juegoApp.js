@@ -8,10 +8,19 @@
  * Deal = Repartir
  */
 
+//Init variables
 let deck           = [];
 let deckSize       = 0;
 const types        = ['C','D','H','S'];
 const specialCards = ['A','J','Q','K'];
+let playerScore = 0 , computerScore = 0;
+
+//HTML ref variables
+const btnHit = document.querySelector('#btnHitCard');
+const playerScoreTag = document.querySelector('#playerScoreTag'); 
+const computerScoreTag = document.querySelector('#computerScoreTag');
+const divPlayerCards = document.querySelector('#player-cards'); 
+const divComputerCards = document.querySelector('#computer-cards'); 
 
 const createDeck = () => {
     /*Podría renombrar las cartas del 1 al 13
@@ -42,8 +51,6 @@ const hitCard = () => {
         throw 'No quedan más cartas que jugar';
     }
     const card = deck.pop();
-    console.log(deck);
-    console.log(card);
     return card;
 }
 
@@ -57,7 +64,7 @@ const cardValue = (card) => {
     const value = card.substring(0, card.length - 1);
     return (isNaN(value)) ? ( (value === 'A') ? 11 : 10 ) : parseInt(value);
 
-    /* 
+    /* Legacy Code
     if( isNaN(value) ){ 
         //Los únicos valores posibles son 'A','J','Q' y 'K'
         //En Blackjack 'A' es la única que vale 11 puntos
@@ -70,4 +77,25 @@ const cardValue = (card) => {
 
 }
 
-console.log(cardValue('5D'));
+// Eventos (Callback is present... warning)
+btnHit.addEventListener('click', () => {
+
+    const hittedCard = hitCard();
+    playerScore = playerScore + cardValue(hittedCard);
+    playerScoreTag.innerHTML = playerScore;
+
+    //<img class="deck-card" src="assets/cards/2C.png">
+    const imgCard = document.createElement('img');
+    imgCard.src = `assets/cards/${hittedCard}.png`;
+    imgCard.classList.add('deck-card')
+    divPlayerCards.append(imgCard);
+
+    if(playerScore > 21){
+        console.warn('HAS PERDIDO');
+        btnHit.disabled = true;
+    } else if (playerScore === 21) {
+        console.warn('JUGADOR: 21 PUNTOS!!!');
+    }
+
+})
+
