@@ -5,19 +5,24 @@
  * 2S = 2 of Spades (Espadas)
  * Hit = Pedir carta
  * Stand = Plantarse
- * Deal = Repartir
+ * New Game / Deal = Nuevo Juego / Repartir
  */
 
-//Init variables
+//Global Variables
 let deck           = [];
 let deckSize       = 0;
 const types        = ['C','D','H','S'];
+const minNumCard   = 2;
+const maxNumCard   = 10;
 const specialCards = ['A','J','Q','K'];
+const AceValue     = 11;
+const jqkValue     = 10;
 let playerScore = 0 , computerScore = 0;
 
-//HTML ref variables
-const btnHit   = document.querySelector('#btnHitCard');
-const btnStand = document.querySelector('#btnStand');
+//DOM Ref Variables
+const btnHit     = document.querySelector('#btnHitCard');
+const btnStand   = document.querySelector('#btnStand');
+const btnNewGame = document.querySelector('#btnNewGame');
 
 const playerScoreTag   = document.querySelector('#playerScoreTag'); 
 const computerScoreTag = document.querySelector('#computerScoreTag');
@@ -25,13 +30,17 @@ const computerScoreTag = document.querySelector('#computerScoreTag');
 const divPlayerCards   = document.querySelector('#player-cards'); 
 const divComputerCards = document.querySelector('#computer-cards'); 
 
-const createDeck = () => {
+createDeck();
+//ESTO FUNCIONA GRACIAS AL HOISTING DE JS
+function createDeck () {
+    //Purgo el deck
+    deck = [];
     /*Podría renombrar las cartas del 1 al 13
     para que fuera todo en un único bucle más 
     sencillo, pero por fines didácticos, quiero 
     jugar con el segundo bucle for para ver 
     otra manera de hacerlo.*/
-    for (let i=2; i<=10; i++) {
+    for (let i=minNumCard; i<=maxNumCard; i++) {
         for (let type of types) {
             deck.push(i + type);
         }
@@ -43,13 +52,10 @@ const createDeck = () => {
     }
     deck = _.shuffle(deck);//underscore function
     deckSize = deck.length;
-    return deck;
 }
 
-createDeck();
-
 const hitCard = () => {
-
+    
     if(deck.length === 0){
         throw 'No quedan más cartas que jugar';
     }
@@ -65,8 +71,7 @@ const hitCard = () => {
 const cardValue = (card) => {
 
     const value = card.substring(0, card.length - 1);
-    return (isNaN(value)) ? ( (value === 'A') ? 11 : 10 ) : parseInt(value);
-
+    return (isNaN(value)) ? ( (value === 'A') ? AceValue : jqkValue ) : parseInt(value);
     /* Legacy Code
     if( isNaN(value) ){ 
         //Los únicos valores posibles son 'A','J','Q' y 'K'
@@ -77,10 +82,28 @@ const cardValue = (card) => {
         points = parseInt(value);
     }
     */
-
 }
 
 // Eventos (Callback is present... warning)
+btnNewGame.addEventListener('click', () => {
+
+    console.clear();
+    createDeck();
+
+    playerScore   = 0;
+    computerScore = 0;
+
+    playerScoreTag.innerHTML   = 0;
+    computerScoreTag.innerHTML = 0;
+
+    divPlayerCards.innerHTML   = '';
+    divComputerCards.innerHTML = '';
+
+    btnHit.disabled   = false;
+    btnStand.disabled = false;
+
+});
+
 btnHit.addEventListener('click', () => {
 
     const hittedCard = hitCard();
@@ -105,7 +128,7 @@ btnHit.addEventListener('click', () => {
         ComputerPlay(playerScore);
     }
 
-})
+});
 
 btnStand.addEventListener('click',() => {
     //Bloqueo las acciones del jugador
@@ -113,7 +136,7 @@ btnStand.addEventListener('click',() => {
     btnStand.disabled = true;
     //Juega la máquina
     ComputerPlay(playerScore);
-})
+});
 
 //Machine (Computer player) logic -> minScoreToWin = playerScore
 const ComputerPlay = (minScoreToWin) => {
@@ -153,7 +176,7 @@ const ComputerPlay = (minScoreToWin) => {
         } else {
             alert('COMPUTADORA GANA');
         }
-    }, 10);
+    }, 100);
     
 
 }
